@@ -43,7 +43,7 @@ int main() {
 	system("clear");
 
 	for(int i = 0; i < qtd_centroides; i++){
-		cout << "centroide " << i << ": " << "x = " << centroides[i][0] << " y = " << centroides[i][1] << endl;
+		cout << "centroide " << i+1 << ": " << "x = " << centroides[i][0] << " y = " << centroides[i][1] << endl;
 	}
 
 	puts("-----------------------");
@@ -51,7 +51,7 @@ int main() {
 	//PARTE QUE CAPTURA A QUANTIDADE E OS VALORES DOS OBJETOS A PARTIR DE UM ARQUIVO TXT
 
 	int qtd_obj;
-	FILE* arq = fopen("/home/fernando/Qt-Projects/kmeans/data.txt", "r");
+	FILE* arq = fopen("data.txt", "r");
 	fscanf(arq, "%i\n", &qtd_obj);
 	cout << "Qtd de objetos: " << qtd_obj << endl;
 
@@ -62,7 +62,7 @@ int main() {
 		objetos[i][0] = x;
 		objetos[i][1] = y;
 
-		cout << "objeto " << i << ": x = " << objetos[i][0] << " y = " << objetos[i][1] << endl;
+		cout << "objeto " << i+1 << ": x = " << objetos[i][0] << " y = " << objetos[i][1] << endl;
 	}
 	fclose(arq);
 
@@ -78,7 +78,7 @@ int main() {
 		for(int j = 0; j < qtd_centroides; j++){
 			distancias[j] = distancia_euclidiana(objetos[i][0], objetos[i][1], centroides[j][0], centroides[j][1]);
 			//Cálculo das distâncias
-			cout << "d(obj" << i << ", cl" << j << ") = " << distancias[j] << endl;
+			cout << "d(obj" << i+1 << ", cl" << j+1 << ") = " << distancias[j] << endl;
 		}
 		if(distancias[0] < distancias[1] && distancias[0] < distancias[2]){
 			cl.cent = 0;
@@ -97,7 +97,7 @@ int main() {
 	}
 
 	for(int i = 0; i < qtd_obj; i++){
-		cout << "Objeto " << l.front().obj << " no cluster " << l.front().cent << endl;
+		cout << "Objeto " << l.front().obj + 1 << " no cluster " << l.front().cent + 1 << endl;
 		l.pop_front();
 	}
 
