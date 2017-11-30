@@ -15,12 +15,12 @@ using namespace std;
 
 typedef struct{
 	int num;
-	float x, y, z;
+	float x, y, z, a;
 }centroide;
 
 typedef struct{
 	int num;
-	float x, y, z;
+	float x, y, z, a;
 }objeto;
 
 typedef struct{
@@ -29,8 +29,8 @@ typedef struct{
 	objeto obj_atr;
 }classificacao;
 
-float distancia_euclidiana(float x1, float y1, float z1, float x2, float y2, float z2){
-	return sqrt(pow(x1-x2, 2) + pow(y1-y2, 2) + pow(z1-z2, 2));
+float distancia_euclidiana(float x1, float y1, float z1, float a1, float x2, float y2, float z2, float a2){
+	return sqrt(pow(x1-x2, 2) + pow(y1-y2, 2) + pow(z1-z2, 2) + pow(a1-a2, 2));
 }
 
 int menor(vector<float> v){
@@ -63,6 +63,8 @@ int main() {
 		cin >> c.y;
 		cout << "Digite o valor de z do centroide " << i << endl;
 		cin >> c.z;
+        cout << "Digite o valor de a do centroide " << i << endl;
+		cin >> c.a;
 		c.num = i;
 
 		centroides.push_back(c);
@@ -73,7 +75,7 @@ int main() {
 	list<centroide>::iterator it;
 	//Imprime os valores x, y, z dos centróides
 	for(it = centroides.begin(); it != centroides.end(); it++){
-		cout << "centroide " << it->num << " x: " << it->x << "; y: " << it->y << "; z: " << it->z << endl;
+		cout << "centroide " << it->num << " x: " << it->x << "; y: " << it->y << "; z: " << it->z << "; a: " << it->a << endl;
 	}
 
 	puts("----------------------------------");
@@ -89,13 +91,13 @@ int main() {
 	objeto obj;
 
 	for(int i = 0; i < qtd_obj; i++){
-		fscanf(arq, "%f,%f,%f\n", &obj.x, &obj.y, &obj.z);
+		fscanf(arq, "%f,%f,%f,%f\n", &obj.x, &obj.y, &obj.z, &obj.a);
 		obj.num = i;
 		objetos.push_back(obj);
 	}
 	//Imprime os valores dos atributos de cada objeto
 	for(ito = objetos.begin(); ito != objetos.end(); ito++){
-		cout << "objeto " << ito->num << ": x = " << ito->x << "; y = " << ito->y << "; z = " << ito->z << endl;
+		cout << "objeto " << ito->num << ": x = " << ito->x << "; y = " << ito->y << "; z = " << ito->z << "; a = " << ito->a << endl;
 	}
 	fclose(arq);
 
@@ -111,7 +113,7 @@ int main() {
 	bool continua = false;
 	int m;
 	int i = 0;
-	float x = 0, y = 0, z = 0;
+	float x = 0, y = 0, z = 0, a = 0;
 	int count = 0;
 
 	do{
@@ -122,7 +124,7 @@ int main() {
 		continua = false;
 		for(ito = objetos.begin(); ito != objetos.end(); ito++){
 			for(it = centroides.begin(); it != centroides.end(); it++){
-				distancia.push_back(distancia_euclidiana(ito->x, ito->y, ito->z, it->x, it->y, it->z));
+				distancia.push_back(distancia_euclidiana(ito->x, ito->y, ito->z, it->a, it->x, it->y, it->z, it->a));
 				//Imprime a distância de cada objeto apra cada cluster
 				//cout << "Distância do objeto " << ito->num << " para cluster ";
 				//cout << it->num << ": " << distancia_euclidiana(ito->x, ito->y, ito->z, it->x, it->y, it->z) << endl;
@@ -134,6 +136,7 @@ int main() {
 			cl.obj_atr.x = ito->x;
 			cl.obj_atr.y = ito->y;
 			cl.obj_atr.z = ito->z;
+            cl.obj_atr.a = ito->a;
 
 			distancia.clear();
 			classificao.push_back(cl);
@@ -159,6 +162,7 @@ int main() {
 					x += itc->obj_atr.x;
 					y += itc->obj_atr.y;
 					z += itc->obj_atr.z;
+                    a += itc->obj_atr.a;
 					count++;
 				}
 			}
@@ -167,6 +171,7 @@ int main() {
 				novo_cent.x = x/count;
 				novo_cent.y = y/count;
 				novo_cent.z = z/count;
+                novo_cent.a = a/count;
 				count = 0;
 				x = 0;
 				y = 0;
@@ -178,24 +183,25 @@ int main() {
 				c.x = it->x;
 				c.y = it->y;
 				c.z = it->z;
+                c.a = it->a;
 				novos_centroides.push_back(c);
 			}
 			i++;
 		}
 		for(it = centroides.begin(); it != centroides.end(); it++){
-			cout << "Velho Centroide: " << it->num << " -> X: " << it->x << "; Y: " << it->y << "; Z: " << it->z << endl;
+			cout << "Velho Centroide: " << it->num << " -> X: " << it->x << "; Y: " << it->y << "; Z: " << it->z << "; A: " << it->a << endl;
 		}
 
 		puts("----------------------------------");
 
 		for(it_nc = novos_centroides.begin(); it_nc != novos_centroides.end(); it_nc++){
-			cout << "Novo Centroide: " << it_nc->num << " -> X: " << it_nc->x << "; Y: " << it_nc->y << "; Z: " << it_nc->z << endl;
+			cout << "Novo Centroide: " << it_nc->num << " -> X: " << it_nc->x << "; Y: " << it_nc->y << "; Z: " << it_nc->z << "; A: " << it_nc->a << endl;
 		}
 
 		it_nc = novos_centroides.begin();
 		//Comparação do centróide antigo com o novo centróide calculado
 		for(it = centroides.begin(); it != centroides.end(); it++){
-			if((it->x != it_nc->x) || (it->y != it_nc->y) || (it->z != it_nc->z)){
+			if((it->x != it_nc->x) || (it->y != it_nc->y) || (it->z != it_nc->z) || (it->a != it_nc->a)){
 				continua = true;
 			}
 			it_nc++;
@@ -207,6 +213,7 @@ int main() {
 				c.x = it_nc->x;
 				c.y = it_nc->y;
 				c.z = it_nc->z;
+                c.a = it_nc->a;
 				centroides.push_back(c);
 			}
 
